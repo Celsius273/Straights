@@ -4,6 +4,8 @@
 #include "Card.h"
 #include "Command.h"
 #include "Deck.h"
+#include "Player.h"
+#include "HumanPlayer.h"
 
 #include <vector>
 
@@ -13,16 +15,22 @@ public:
     Game(std::vector<std::string> const&, int const&);
     //return array cards
     //return players
+    std::vector<Player*> players();
     Deck* deck();
     //void acceptCommand(Command const&);
 
 
 private:
-    //static Game game_;
 
     //Game(std::vector<std::string> const&, int const&);
     Deck* deck_;
-    //std::vector<Player> players;
+    
+    int curPlayer; //game state on which player is currently playing
+    int startPlayer;
+    bool startRound; //TODO: use an enum here
+
+    std::vector<Player*> players_;
+    std::map<string, std::set<string> > playedCards_;
 };
 
 #endif

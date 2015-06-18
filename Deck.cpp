@@ -24,12 +24,6 @@ Deck::Deck(const int& s){
     shuffle();
 }
 
-//reconstructor for deck, resets deck and shuffles it with the provided seed
-void Deck::reConstruct(){
-    //initDeck(cards_);
-    shuffle();
-}
-
 //shuffle the card deck (pre-ordered upon construction)
 void Deck::shuffle(){
     static std::mt19937 rng(seed_);
@@ -53,6 +47,11 @@ void Deck::printDeck() const{
         }else{
             cout << " ";
         }
-
     }
+}
+
+// get card from the deck for the given index
+Card* Deck::getCard(const int &i){
+    //TODO: should we throw an error here?
+    return cards_[i];
 }

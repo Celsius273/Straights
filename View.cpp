@@ -1,6 +1,8 @@
 #include "Card.h"
 #include "Command.h"
 #include "Deck.h"
+#include "Player.h"
+#include "HumanPlayer.h"
 #include "Game.h"
 #include "Controller.h"
 #include "View.h"
@@ -37,7 +39,7 @@ void View::run(){
     /*
     1. quit command -- DONE, though this does not mean much
 
-    2. shuffle (with and without random seed), deck command
+    2. shuffle (with and without random seed), deck command -- DONE, though we should still test WITH a random seed
 
     3. human players only
     a) print player's hand (identify First player, print legal moves)
@@ -52,11 +54,17 @@ void View::run(){
     5. ragequit command
 
     //day 1: 3 hours spent, only need to build test "harness" for game and make game accept commands and execute them
-    MILESTONE for day 2: finish human players, we SHOULD have enough time for this shit
+    MILESTONE for day 2: finish human players, we SHOULD have enough time for this shit, edit: NO NO WE DONT FUCK DAMMIT
     */
+
+    //it seems that when we start the program after initializing the players the cards are dealt and we start the game
+
+    //so something like while game.state != endGame, and within it we have a nested loop saying while game.state != endRound
 
     Command command;
     while (!cin.eof()) {
+
+        //game.printPlayer(); //depends on the player's state
         cin >> command;
 
         controller_->acceptCommand(command);

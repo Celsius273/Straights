@@ -4,6 +4,8 @@
 #include "Command.h"
 #include "Card.h"
 #include "Deck.h"
+#include "Player.h"
+#include "HumanPlayer.h"
 #include "Game.h"
 
 #include <vector>

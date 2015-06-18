@@ -1,6 +1,8 @@
 #include "Command.h"
 #include "Card.h"
 #include "Deck.h"
+#include "Player.h"
+#include "HumanPlayer.h"
 #include "Game.h"
 #include "Controller.h"
 
@@ -10,6 +12,10 @@
 
 using namespace std;
 
+void existLegalPlays(Player* player, Card* card){
+
+}
+
 Controller::Controller(Game *g) : game_(g){}
 
 void Controller::acceptCommand(const Command &command){
@@ -17,11 +23,15 @@ void Controller::acceptCommand(const Command &command){
     switch (command.type) {
         case PLAY: {
             //TODO: to be implemented
+            //checks if the play is valid, make the player get stuck in a loop if the play is invalid
+            //when play is valid, update the state and output
             break;
         }
 
         case DISCARD: {
             //TODO: to be implemented
+            //checks if the discard is valid, make the player get stuck in a loop if the discard is invalid
+            //when discard is valid, update the state and output
             break;
         }
 

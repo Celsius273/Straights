@@ -18,16 +18,14 @@ cards_ is an array of pointers to cards
 class Deck{ // singleton
 public:
     Deck(const int&);
-    void reConstruct();
     void shuffle();
     void printDeck() const;
-    //void deal(std::vector<Player> &);
+    Card* getCard(const int&);
 
 private:
     //initial card deck with following order
     Card* cards_[52];
     int seed_;
-    Card draw();
 };
 
 #endif
