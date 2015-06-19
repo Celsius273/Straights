@@ -3,8 +3,9 @@
 #include "Deck.h"
 #include "Player.h"
 #include "HumanPlayer.h"
+#include "ComputerPlayer.h"
 #include "Game.h"
-#include "HumanPlayer.h"
+
 #include <cassert>
 #include <vector>
 #include <iostream>
@@ -22,6 +23,7 @@ Game::Game(const vector<string> &playerStr, const int &seed){
         }
         else if (playerStr.at(i) == "c"){
             // create computer player
+            players_.push_back(new ComputerPlayer(i));
         }
     }
     deck_ = new Deck(seed);
@@ -37,12 +39,29 @@ int Game::curPlayer() const{
     return curPlayer_;
 }
 
+bool Game::isCurPlayerCpu() const{
+    return players_.at(curPlayer_)->isCpu();
+}
+
 GameState Game::gameState() const{
     return gameState_;
 }
 
 void Game::setState(GameState g){
     gameState_ = g;
+}
+
+void Game::playCpu(Card &c){
+    if (playedCards_.size() == 0){
+        c = Card(SPADE, SEVEN);
+    }
+
+    if (players_.at(curPlayer_)->playCard(c, playedCards_)){
+        gameState_ = PRINTPLAY;
+    }
+    else{
+        gameState_ = PRINTDISCARD;
+    }
 }
 
 void Game::playCard(Card c){

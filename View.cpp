@@ -3,6 +3,7 @@
 #include "Deck.h"
 #include "Player.h"
 #include "HumanPlayer.h"
+#include "ComputerPlayer.h"
 #include "Game.h"
 #include "Controller.h"
 #include "View.h"
@@ -50,40 +51,64 @@ void View::run(){
         cout << "A new round begins. Itfs player "<< game_->curPlayer()+1 << "fs turn to play." << endl;
 
         while (game_->gameState() == PLAYING){
-            //output the player in play
-            game_->printPlayer();
+            if (game_->isCurPlayerCpu()){
+                Card toPrint(SPADE, ACE);
+                controller_->playCpu(toPrint);
 
-            cin >> command;
-            controller_->acceptCommand(command);
-
-            switch (game_->gameState()){
-                case ENDGAME:{
-                    return;
-                }
-
-                case PRINTDECK:{
-                    game_->printDeck();
-                    break;
-                }
-                case PRINTPLAY:{
-                    game_->printPlay(command.card);
-                    break;
-                }
-                case INVALIDPLAY:{
-                    game_->printPlay(command.card);
-                    break;
-                }
-                case PRINTDISCARD:{
-                    game_->printDiscard(command.card);
-                    break;
-                }
-
-                case INVALIDDISCARD:{
-                    game_->printDiscard(command.card);
-                    break;
+                switch (game_->gameState()){
+                    case ENDGAME:{
+                        return;
+                    }
+                    case PRINTPLAY:{
+                        game_->printPlay(toPrint);
+                        break;
+                    }
+                    case PRINTDISCARD:{
+                        game_->printDiscard(toPrint);
+                        break;
+                    }
                 }
             }
+            else{
+                //output the player in play
+                game_->printPlayer();
 
+                //if we see that the current player is a computer player then we skip the command/accepting the command and make the game 
+
+                cin >> command;
+
+                //surround this and the case statement with a try catch
+                //this would catch cards that are in your hand but are not legal plays, and attempts at discard when legal plays still exist
+                controller_->acceptCommand(command);
+
+                switch (game_->gameState()){
+                    case ENDGAME:{
+                        return;
+                    }
+
+                    case PRINTDECK:{
+                        game_->printDeck();
+                        break;
+                    }
+                    case PRINTPLAY:{
+                        game_->printPlay(command.card);
+                        break;
+                    }
+                    case INVALIDPLAY:{
+                        game_->printPlay(command.card);
+                        break;
+                    }
+                    case PRINTDISCARD:{
+                        game_->printDiscard(command.card);
+                        break;
+                    }
+
+                    case INVALIDDISCARD:{
+                        game_->printDiscard(command.card);
+                        break;
+                    }
+                }
+            }
             //determine if round has ended or not
             game_->checkRound();
 

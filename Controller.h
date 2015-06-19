@@ -16,6 +16,7 @@ class Controller{
 public:
     Controller(Game*);
     void acceptCommand(Command const&);
+    void playCpu(Card&);
 
 private:
     Game* game_;

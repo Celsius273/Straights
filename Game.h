@@ -21,9 +21,11 @@ public:
     //std::vector<Player*> players() const;
     Deck* deck();
     int curPlayer() const;
+    bool isCurPlayerCpu() const;
     GameState gameState() const;
     void setState(GameState);
     
+    void playCpu(Card&);
     void playCard(Card);
     void discard(Card);
 

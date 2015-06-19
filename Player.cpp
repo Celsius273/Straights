@@ -11,7 +11,6 @@ using namespace std;
 
 Player::Player(int i): id_(i){
     score_ = 0;
-    prevScore_ = 0;
 }
 
 int Player::id() const{

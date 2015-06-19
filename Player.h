@@ -26,6 +26,7 @@ public:
 
 
     // To be implemented by HumanPlayer and ComputerPlayer
+    virtual bool isCpu() = 0;
     virtual void printPlayer(const std::map<Suit, std::set<Rank> >&) = 0;
     virtual bool playCard(Card&, std::map<Suit, std::set<Rank> >&) = 0;
     virtual bool discard(Card&, std::map<Suit, std::set<Rank> >&) = 0;
@@ -37,10 +38,10 @@ protected:
 
 private:
     int id_;
-    int prevScore_;
     int score_;
     std::vector<Card*> hand_;
     std::vector<Card*> discard_;
+
 
     int calculateScore(); //calculates a player's score based on their discard pile and previous score
 };

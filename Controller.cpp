@@ -3,6 +3,7 @@
 #include "Deck.h"
 #include "Player.h"
 #include "HumanPlayer.h"
+#include "ComputerPlayer.h"
 #include "Game.h"
 #include "Controller.h"
 
@@ -12,12 +13,11 @@
 
 using namespace std;
 
-void existLegalPlays(Player* player, Card* card){
-
-}
-
 Controller::Controller(Game *g) : game_(g){}
 
+void Controller::playCpu(Card &card){
+    game_->playCpu(card);
+}
 void Controller::acceptCommand(const Command &command){
     //Controller only updates the game state
     switch (command.type) {

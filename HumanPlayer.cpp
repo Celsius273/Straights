@@ -19,6 +19,10 @@ namespace{
 
 HumanPlayer::HumanPlayer(int p) : Player(p){}
 
+bool HumanPlayer::isCpu(){
+    return false;
+}
+
 void HumanPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
 
     bool played[13] = { false, false, false, false, false, false, false, false, false, false, false, false, false };
