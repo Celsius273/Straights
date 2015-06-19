@@ -19,8 +19,8 @@ class Deck{ // singleton
 public:
     Deck(const int&);
     void shuffle();
-    void printDeck() const;
     Card* getCard(const int&);
+    void printDeck() const;
 
 private:
     //initial card deck with following order

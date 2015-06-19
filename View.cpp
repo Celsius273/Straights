@@ -21,22 +21,6 @@ View::View(Controller *c, Game *g) : game_(g), controller_(c){}
 
 void View::run(){
     /*
-    Classes we need:
-    Deck -> a collection of cards
-    Player -> ComputerPlayer, HumanPlayer (make sure you ONLY call Player's constructor from the constructors of ComputerPlayer and HumanPlayer)
-
-    Exception -> There could be a bunch of these, might as well throw the acceptable one
-
-    Game -> to take in input and change states/etc, basically an MVC model thingy
-
-    */
-
-    // First build the test harness for commands, starting with the quit command
-
-
-
-
-    /*
     1. quit command -- DONE, though this does not mean much
 
     2. shuffle (with and without random seed), deck command -- DONE, though we should still test WITH a random seed
@@ -62,30 +46,68 @@ void View::run(){
     //so something like while game.state != endGame, and within it we have a nested loop saying while game.state != endRound
 
     Command command;
-    while (!cin.eof()) {
+    while (game_->gameState() != ENDGAME){
+        cout << "A new round begins. Itfs player "<< game_->curPlayer()+1 << "fs turn to play." << endl;
 
-        //game.printPlayer(); //depends on the player's state
-        cin >> command;
+        while (game_->gameState() == PLAYING){
+            //output the player in play
+            game_->printPlayer();
 
-        controller_->acceptCommand(command);
+            cin >> command;
+            controller_->acceptCommand(command);
 
-        switch (command.type) {
-            case PLAY: {
-                break;
+            switch (game_->gameState()){
+                case ENDGAME:{
+                    return;
+                }
+
+                case PRINTDECK:{
+                    game_->printDeck();
+                    break;
+                }
+                case PRINTPLAY:{
+                    game_->printPlay(command.card);
+                    break;
+                }
+                case INVALIDPLAY:{
+                    game_->printPlay(command.card);
+                    break;
+                }
+                case PRINTDISCARD:{
+                    game_->printDiscard(command.card);
+                    break;
+                }
+
+                case INVALIDDISCARD:{
+                    game_->printDiscard(command.card);
+                    break;
+                }
             }
 
-            case DECK: {
-                game_->deck()->printDeck();
-                break;
-            }
+            //determine if round has ended or not
+            game_->checkRound();
 
-            case QUIT: {
-                return;
-            }
-
-            default: {
-                cerr << "Invalid Command" << endl;
-            }
         }
+
+        
+        game_->checkScores();
+        //print scores and add scores here
+        //round has ended, determine if game has ended or not
+        /*
+        for all players:
+
+        Player <x>'s discards: <list of discards>
+        Player <x>'s score: <old score> + <score gained> = <new score>
+        */
+
+        if (game_->gameState() == ENDROUND){
+            game_->restartRound();
+        }
+
+        //if gamestate becomes play again, reset the round here
     }
+    game_->printWinner();
+
+    cout << "GAME OVER BITCHES" << endl;
+    //game has ended, print winner(s)
 }
