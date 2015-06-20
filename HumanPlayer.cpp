@@ -27,9 +27,8 @@ void HumanPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
 
     bool played[13] = { false, false, false, false, false, false, false, false, false, false, false, false, false };
 
-
     //debug
-    cout << endl << "player: " << id() + 1 << "|| Score: " << score() << endl;
+    //cout << endl << "player: " << id() + 1 << "|| Score: " << score() << endl;
     //
 
 
@@ -79,25 +78,32 @@ void HumanPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
     if (playedCards.size() == 0){
         for (int i = 0; i < playerhand.size(); i++){
             if (*(playerhand.at(i)) == Card(SPADE, SEVEN)){
-                cout << *(playerhand.at(i)) << endl << endl;
+                cout << *(playerhand.at(i)) << endl << ">";
                 return;
             }
         }
     }
     else{
-        for (int i = 0; i < playerhand.size() - 1; i++){
+        int hiLegal = 0;
+        for (int i = 0; i < playerhand.size(); i++){
             if (isCardLegal(*(playerhand.at(i)), playedCards)){
-                cout << *(playerhand.at(i)) << " "; //todo: do not print space if this is the last legal card
+                hiLegal = i;
             }
         }
-        if (isCardLegal(*(playerhand.at(playerhand.size() - 1)), playedCards)){
-            cout << *(playerhand.at(playerhand.size() - 1));
-        }
 
-        cout << endl << endl;
+        for (int i = 0; i < playerhand.size(); i++){
+            if (isCardLegal(*(playerhand.at(i)), playedCards)){
+                cout << *(playerhand.at(i)); //do not print space if this is the last legal card
+                if (i != hiLegal){
+                    cout << " ";
+                }
+            }
+        }
+        cout << endl << ">";
     }
 
-    printDiscard();
+    //debug printing method for printing the discard pile
+    // printDiscard(); 
 }
 
 bool HumanPlayer::playCard(Card& card, map<Suit, set<Rank> > &playedCards){

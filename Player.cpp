@@ -64,13 +64,11 @@ void Player::printScores(){
     cout << "Player " << id_+1 << "'s discards: ";
     for(int i = 0; i < discard_.size(); i++){
         cout << *(discard_.at(i));
-        if (i == discard_.size() - 1){
-            cout << endl;
-        }
-        else{
+        if (i != discard_.size() - 1){
             cout << " ";
         }
     }
+    cout << endl;
 
     int newScore = calculateScore();
     cout << "Player " << id_ + 1 << "'s score: " << score_ << " + " << newScore << " = " << score_+newScore << endl;

@@ -48,7 +48,7 @@ void View::run(){
 
     Command command;
     while (game_->gameState() != ENDGAME){
-        cout << "A new round begins. Itfs player "<< game_->curPlayer()+1 << "fs turn to play." << endl;
+        cout << "A new round begins. It's player "<< game_->curPlayer()+1 << "'s turn to play." << endl;
 
         while (game_->gameState() == PLAYING){
             if (game_->isCurPlayerCpu()){
@@ -79,38 +79,37 @@ void View::run(){
 
                 //surround this and the case statement with a try catch
                 //this would catch cards that are in your hand but are not legal plays, and attempts at discard when legal plays still exist
-                controller_->acceptCommand(command);
+                try{
+                    controller_->acceptCommand(command);
 
-                switch (game_->gameState()){
-                    case ENDGAME:{
-                        return;
+                    switch (game_->gameState()){
+                        case ENDGAME:{
+                            return;
+                        }
+                        case RAGEPRINT:{
+                            cout << "Player " << game_->curPlayer() + 1 << " ragequits. A computer will now take over." << endl;
+                            game_->setState(PLAYING);
+                            break;
+                        }
+                        case PRINTDECK:{
+                            game_->printDeck();
+                            break;
+                        }
+                        case PRINTPLAY:{
+                            game_->printPlay(command.card);
+                            break;
+                        }
+                        case PRINTDISCARD:{
+                            game_->printDiscard(command.card);
+                            break;
+                        }
                     }
-                    case RAGEPRINT:{
-                        cout << "Player " << game_->curPlayer()+1 << " ragequits. A computer will now take over." << endl;
-                        game_->setState(PLAYING);
-                        break;
-                    }
-                    case PRINTDECK:{
-                        game_->printDeck();
-                        break;
-                    }
-                    case PRINTPLAY:{
-                        game_->printPlay(command.card);
-                        break;
-                    }
-                    case INVALIDPLAY:{
-                        game_->printPlay(command.card);
-                        break;
-                    }
-                    case PRINTDISCARD:{
-                        game_->printDiscard(command.card);
-                        break;
-                    }
-
-                    case INVALIDDISCARD:{
-                        game_->printDiscard(command.card);
-                        break;
-                    }
+                }
+                catch (Game::InvalidMoveException &ime){
+                    cout << ime.message();
+                }
+                catch (Game::InvalidDiscardException &ide){
+                    cout << ide.message();
                 }
             }
             //determine if round has ended or not
@@ -129,14 +128,12 @@ void View::run(){
         Player <x>'s score: <old score> + <score gained> = <new score>
         */
 
+        //if gamestate becomes play again, reset the round here
         if (game_->gameState() == ENDROUND){
             game_->restartRound();
         }
-
-        //if gamestate becomes play again, reset the round here
     }
-    game_->printWinner();
 
-    cout << "GAME OVER BITCHES" << endl;
     //game has ended, print winner(s)
+    game_->printWinner();
 }

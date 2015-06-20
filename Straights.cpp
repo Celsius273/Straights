@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     
     for (int i = 1; i <= 4; i++){ // Accept h or c as inputs only, keep asking the user for input if input is not valid
         string playerType;
-        cout << "Is player " << i << " a human(h) or a computer(c)?" << endl << endl;
+        cout << "Is player " << i << " a human(h) or a computer(c)?" << endl << ">";
         cin >> playerType;
 
         if (playerType != "h" && playerType != "c"){

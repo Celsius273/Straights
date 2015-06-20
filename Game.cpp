@@ -12,9 +12,6 @@
 
 using namespace std;
 
-namespace{
-}
-
 Game::Game(const vector<string> &playerStr, const int &seed){
     for (int i = 0; i < 4; i++){
         if (playerStr.at(i) == "h"){
@@ -72,7 +69,7 @@ void Game::playCpu(Card &c){
 
 void Game::playCard(Card c){
     if (playedCards_.size() == 0 && !(c.getRank() == SEVEN && c.getSuit() == SPADE)){
-        gameState_ = INVALIDPLAY;
+        throw Game::InvalidMoveException();
         return;
     }
 
@@ -80,7 +77,7 @@ void Game::playCard(Card c){
         gameState_ = PRINTPLAY;
     }
     else{
-        gameState_ = INVALIDPLAY;
+        throw Game::InvalidMoveException();
     }
 }
 
@@ -89,39 +86,31 @@ void Game::discard(Card c){
         gameState_ = PRINTDISCARD;
     }
     else{
-        gameState_ = INVALIDDISCARD;
+        throw Game::InvalidDiscardException();
     }
 }
 
 void Game::printDeck(){
     gameState_ = PLAYING;
     deck_->printDeck();
-    cout << endl;
 }
 
 void Game::printPlayer(){
-    players_.at(curPlayer_)->printPlayer(playedCards_);
+    if (!printed_){
+        players_.at(curPlayer_)->printPlayer(playedCards_);
+        printed_ = true;
+    }
 }
 
 void Game::printPlay(Card c){
-    if (gameState_ == PRINTPLAY){
-        cout << "Player " << curPlayer_+1 <<" plays "<< c << "." << endl;
-        nextPlayer();
-    }
-    else if (gameState_ == INVALIDPLAY){
-        cout << "This is not a legal play." << endl << endl;
-    }
+    cout << "Player " << curPlayer_+1 <<" plays "<< c << "." << endl;
+    nextPlayer();
     gameState_ = PLAYING;
 }
 
 void Game::printDiscard(Card c){
-    if (gameState_ == PRINTDISCARD){
-        cout << "Player " << curPlayer_ + 1 << " discards " << c << "." << endl;
-        nextPlayer();
-    }
-    else if (gameState_ == INVALIDDISCARD){
-        cout << "You have a legal play. You may not discard." << endl << endl;
-    }
+    cout << "Player " << curPlayer_ + 1 << " discards " << c << "." << endl;
+    nextPlayer();
     gameState_ = PLAYING;
 }
 
@@ -190,4 +179,5 @@ void Game::deal(){
 void Game::nextPlayer(){
     // advances the game state to the next player's turn
     curPlayer_ = (curPlayer_ + 1) % 4;
+    printed_ = false;
 }

@@ -10,12 +10,29 @@
 #include <vector>
 
 enum GameState {
-    PLAYING, PRINTDECK, PRINTPLAY, INVALIDPLAY, PRINTDISCARD, INVALIDDISCARD, ENDROUND, ENDGAME, RAGEPRINT
+    PLAYING, PRINTDECK, PRINTPLAY, PRINTDISCARD, RAGEPRINT, ENDROUND, ENDGAME
 };
 
 // Model class for MVC model
 class Game{
 public:
+    class InvalidMoveException{
+    public:
+        InvalidMoveException(){}
+        std::string message() const { return message_; }
+
+    private:
+        std::string message_ = "This is not a legal play.\n>";
+    };
+    class InvalidDiscardException{
+    public:
+        InvalidDiscardException(){}
+        std::string message() const { return message_; }
+
+    private:
+        std::string message_ = "You have a legal play. You may not discard.\n>";
+    };
+
     Game(std::vector<std::string> const&, int const&);
     
     Deck* deck();
@@ -43,7 +60,7 @@ private:
     Deck* deck_;
     
     int curPlayer_; //game state on which player is currently playing
-    bool startRound_; //TODO: use an enum here
+    bool printed_;
     static const int WIN_POINTS = 80;
     GameState gameState_;
     std::vector<Player*> players_;      

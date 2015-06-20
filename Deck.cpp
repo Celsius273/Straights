@@ -12,7 +12,8 @@ namespace {
     const static int CARD_COUNT = 52;
     void initDeck(Card* (&cards)[52]){
         for (int i = 0; i < CARD_COUNT; i ++){
-            cards[i] = new Card(Suit(i%4), Rank(i%13));
+            cards[i] = new Card(Suit(i/13), Rank(i%13));
+
         }
     }
 }
@@ -48,10 +49,10 @@ void Deck::printDeck() const{
             cout << " ";
         }
     }
+    cout << ">";
 }
 
 // get card from the deck for the given index
 Card* Deck::getCard(const int &i){
-    //TODO: should we throw an error here?
     return cards_[i];
 }

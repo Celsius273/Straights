@@ -27,17 +27,23 @@ void ComputerPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
 }
 
 bool ComputerPlayer::playCard(Card &card, map<Suit, set<Rank> > &playedCards){
-
+    vector<Card*> playHand = hand();
     //play the first card that is playable
     if (card == Card(SPADE, SEVEN)){
         set<Rank> newSet;
         newSet.insert(card.getRank());
         playedCards[card.getSuit()] = newSet;
+
+        //discard 7 of spades
+        for (int i = 0; i < playHand.size(); i++){
+            if (*(playHand.at(i)) == card){
+                discardAtIdx(i, false);
+                return true;
+            }
+        }
         return true;
     }
 
-
-    vector<Card*> playHand = hand();
     for (int i = 0; i < playHand.size(); i++){
 
         if (isCardLegal(*(playHand.at(i)), playedCards)){                //is it legal?
