@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
     int shuffleSeed = 0; //get a shuffle seed
-    if (argc > 0){
+    if (argc > 1){
         shuffleSeed = atoi(argv[1]);
     }
 
