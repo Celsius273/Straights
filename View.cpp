@@ -73,7 +73,7 @@ void View::run(){
                 //output the player in play
                 game_->printPlayer();
 
-                //if we see that the current player is a computer player then we skip the command/accepting the command and make the game 
+                //if we see that the current player is a computer player then we skip the command/accepting the command and make the game
 
                 cin >> command;
 
@@ -105,11 +105,8 @@ void View::run(){
                         }
                     }
                 }
-                catch (Game::InvalidMoveException &ime){
-                    cout << ime.message();
-                }
-                catch (Game::InvalidDiscardException &ide){
-                    cout << ide.message();
+                catch (const Game::InvalidException &e){
+                    cout << e.message();
                 }
             }
             //determine if round has ended or not
@@ -117,7 +114,7 @@ void View::run(){
 
         }
 
-        
+
         game_->checkScores();
         //print scores and add scores here
         //round has ended, determine if game has ended or not

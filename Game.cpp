@@ -69,7 +69,7 @@ void Game::playCpu(Card &c){
 
 void Game::playCard(Card c){
     if (playedCards_.size() == 0 && !(c.getRank() == SEVEN && c.getSuit() == SPADE)){
-        throw Game::InvalidMoveException();
+        throw Game::InvalidException("This is not a legal play.\n>");
         return;
     }
 
@@ -77,7 +77,7 @@ void Game::playCard(Card c){
         gameState_ = PRINTPLAY;
     }
     else{
-        throw Game::InvalidMoveException();
+        throw Game::InvalidException("This is not a legal play.\n>");
     }
 }
 
@@ -86,7 +86,7 @@ void Game::discard(Card c){
         gameState_ = PRINTDISCARD;
     }
     else{
-        throw Game::InvalidDiscardException();
+        throw Game::InvalidException("You have a legal play. You may not discard.\n>");
     }
 }
 
@@ -149,7 +149,7 @@ void Game::restartRound(){
 
     deck_->shuffle();
     deal();
-    
+
     gameState_ = PLAYING;
 }
 
