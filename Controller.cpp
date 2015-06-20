@@ -22,7 +22,6 @@ void Controller::acceptCommand(const Command &command){
     //Controller only updates the game state
     switch (command.type) {
         case PLAY: {
-            //TODO: to be implemented
             //checks if the play is valid, make the player get stuck in a loop if the play is invalid
             //when play is valid, update the state and output
             game_->playCard(command.card);
@@ -31,7 +30,6 @@ void Controller::acceptCommand(const Command &command){
         }
 
         case DISCARD: {
-            //TODO: to be implemented
             //checks if the discard is valid, make the player get stuck in a loop if the discard is invalid
             //when discard is valid, update the state and output
             game_->discard(command.card); //TODO: Implement
@@ -43,12 +41,12 @@ void Controller::acceptCommand(const Command &command){
             break;
         }
 
-        case QUIT: {
+        case QUIT: {    //quit this thingy
             game_->setState(ENDGAME);
             break;
         }
 
-        case RAGEQUIT: {
+        case RAGEQUIT: {    //rage quit gracefully
             game_->setState(RAGEPRINT);
             game_->replacePlayer();
             break;

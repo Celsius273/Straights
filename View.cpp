@@ -21,6 +21,7 @@ using namespace std;
 View::View(Controller *c, Game *g) : game_(g), controller_(c){}
 
 void View::run(){
+    Command command;
     /*
     1. quit command -- DONE, though this does not mean much
 
@@ -38,37 +39,33 @@ void View::run(){
 
     5. ragequit command
 
-    //day 1: 3 hours spent, only need to build test "harness" for game and make game accept commands and execute them
-    MILESTONE for day 2: finish human players, we SHOULD have enough time for this shit, edit: NO NO WE DONT FUCK DAMMIT
     */
-
-    //it seems that when we start the program after initializing the players the cards are dealt and we start the game
-
-    //so something like while game.state != endGame, and within it we have a nested loop saying while game.state != endRound
-
-    Command command;
+    //run this until the game is not ended
     while (game_->gameState() != ENDGAME){
         cout << "A new round begins. It's player "<< game_->curPlayer()+1 << "'s turn to play." << endl;
 
+        //run this while players are playing
         while (game_->gameState() == PLAYING){
+            //check if the player is CPU
             if (game_->isCurPlayerCpu()){
-                Card toPrint(SPADE, ACE);
+                Card toPrint(SPADE, ACE);           //dummy card initialization
                 controller_->playCpu(toPrint);
 
                 switch (game_->gameState()){
                     case ENDGAME:{
-                        return;
+                        return;             //if it is end game, break off
                     }
                     case PRINTPLAY:{
-                        game_->printPlay(toPrint);
+                        game_->printPlay(toPrint);      //print the card that will be played
                         break;
                     }
                     case PRINTDISCARD:{
-                        game_->printDiscard(toPrint);
+                        game_->printDiscard(toPrint);   //print the card that will be discarded
                         break;
                     }
                 }
             }
+            //if not CPU, it must be player
             else{
                 //output the player in play
                 game_->printPlayer();
@@ -84,29 +81,29 @@ void View::run(){
 
                     switch (game_->gameState()){
                         case ENDGAME:{
-                            return;
+                            return;         //if it is end game, break off
                         }
                         case RAGEPRINT:{
                             cout << "Player " << game_->curPlayer() + 1 << " ragequits. A computer will now take over." << endl;
-                            game_->setState(PLAYING);
+                            game_->setState(PLAYING);           //change state to playing
                             break;
                         }
                         case PRINTDECK:{
-                            game_->printDeck();
+                            game_->printDeck();                 //print the deck (debug purpose)
                             break;
                         }
                         case PRINTPLAY:{
-                            game_->printPlay(command.card);
+                            game_->printPlay(command.card);     //print the card that will be played
                             break;
                         }
                         case PRINTDISCARD:{
-                            game_->printDiscard(command.card);
+                            game_->printDiscard(command.card);  //print the card that will be discarded
                             break;
                         }
                     }
                 }
                 catch (const Game::InvalidException &e){
-                    cout << e.message();
+                    cout << e.message();                        //send exception
                 }
             }
             //determine if round has ended or not
@@ -118,12 +115,6 @@ void View::run(){
         game_->checkScores();
         //print scores and add scores here
         //round has ended, determine if game has ended or not
-        /*
-        for all players:
-
-        Player <x>'s discards: <list of discards>
-        Player <x>'s score: <old score> + <score gained> = <new score>
-        */
 
         //if gamestate becomes play again, reset the round here
         if (game_->gameState() == ENDROUND){

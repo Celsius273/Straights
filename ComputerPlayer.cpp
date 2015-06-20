@@ -14,10 +14,13 @@
 
 using namespace std;
 
+//computer player constructor
 ComputerPlayer::ComputerPlayer(int p) : Player(p){}
 
+//copy constructor
 ComputerPlayer::ComputerPlayer(Player* other) : Player(other){}
 
+//return true since this player is inhumane
 bool ComputerPlayer::isCpu(){
     return true;
 }
@@ -26,6 +29,8 @@ void ComputerPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
     //do not print anything
 }
 
+
+//playcard if not, discard first card in hand
 bool ComputerPlayer::playCard(Card &card, map<Suit, set<Rank> > &playedCards){
     vector<Card*> playHand = hand();
     //play the first card that is playable
@@ -59,12 +64,12 @@ bool ComputerPlayer::playCard(Card &card, map<Suit, set<Rank> > &playedCards){
             }
 
             discardAtIdx(i, false);
-            return true;                  //break away from the loop
+            return true;                  //return true so you don't go down to discarding part
         }
     
     }
 
-    card = *(playHand.at(0));
+    card = *(playHand.at(0));                   //if you come this far, you don't have any valid play so just discard first card from the hand
     discardAtIdx(0, true);
     return false;
 }

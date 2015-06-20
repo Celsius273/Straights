@@ -40,8 +40,9 @@ void Deck::shuffle(){
     }
 }
 
+//print deck
 void Deck::printDeck() const{
-    for (int i = 0; i < CARD_COUNT; i++){
+    for (int i = 0; i < CARD_COUNT; i++){       //go through all the card and divide it into list of 13 cards and 4 rows.
         cout << *(cards_[i]);
         if ((i+1)%13 == 0){
             cout << endl;

@@ -9,29 +9,36 @@
 #include <iostream>
 using namespace std;
 
+//player constructor
 Player::Player(int i): id_(i){
     score_ = 0;
 }
 
-Player::Player(Player* other){ // copy constructor
+// copy constructor
+Player::Player(Player* other){ 
     score_ = other->score_;
     id_ = other->id_;
     hand_ = other->hand_;
     discard_ = other->discard_;
 }
 
+//return id
 int Player::id() const{
     return id_;
 }
 
+//return score
 int Player::score() const{
     return score_;
 }
 
+
+//return player's card deck
 vector<Card*> Player::hand(){
     return hand_;
 }
 
+//print the card that will be discarded
 void Player::printDiscard() const{
     //ONLY FOR DEBUG PLEASE DELETE
     cout << "Discard Pile: ";
@@ -41,26 +48,25 @@ void Player::printDiscard() const{
     cout << endl << endl;
 }
 
+//add another card into the deck
 void Player::addCard(Card* card){
     hand_.push_back(card);
 }
 
+//update the player's score
 void Player::updateScore(){
     score_ += calculateScore();
 }
 
+//reset
 void Player::resetCards(){
     hand_.clear();
     discard_.clear();
 }
 
+//print every player's score after displaying discard piles
 void Player::printScores(){
-    /*
-    for all players:
-
-    Player <x>'s discards: <list of discards>
-    Player <x>'s score: <old score> + <score gained> = <new score>
-    */
+    //display discard piles of the player
     cout << "Player " << id_+1 << "'s discards: ";
     for(int i = 0; i < discard_.size(); i++){
         cout << *(discard_.at(i));
@@ -70,10 +76,12 @@ void Player::printScores(){
     }
     cout << endl;
 
+    //calculate player's new score and print
     int newScore = calculateScore();
     cout << "Player " << id_ + 1 << "'s score: " << score_ << " + " << newScore << " = " << score_+newScore << endl;
 }
 
+//calculate the total score
 int Player::calculateScore(){
     int sc = 0;
     for (int i = 0; i < discard_.size(); i++){
@@ -82,6 +90,7 @@ int Player::calculateScore(){
     return sc;
 }
 
+//check if the selected card is a legal play
 bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playedCards){
 
     //Any suit with 7
@@ -95,6 +104,7 @@ bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playe
         return false; //if the suit is not played yet
     }
     
+    //check if the card can be played based on the map of the played cards
     bool isLegal = false;
     if (int(card.getRank()) > 0){
         isLegal |= !(rankSet->second.find(static_cast<Rank>(int(card.getRank()) - 1)) == rankSet->second.end());
@@ -106,6 +116,7 @@ bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playe
     return isLegal;
 }
 
+//discard the card at index
 void Player::discardAtIdx(int idxToDiscard, bool addToDiscard){
     if (addToDiscard){
         discard_.push_back(hand_.at(idxToDiscard)); //add from hand to discard pile

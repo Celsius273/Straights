@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 
     int shuffleSeed = 0; //get a shuffle seed
     if (argc > 1){
-        shuffleSeed = atoi(argv[1]);
+        shuffleSeed = atoi(argv[1]);        //get seed for shuffle
     }
 
     // We can have a vector of players of size 4, depending on h or c for the type of player we will invoke the constructor of the corresponding player class
@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
     Game game(players, shuffleSeed);
     Controller controller(&game);
     View view(&controller, &game);
+    //declare all components that are required.
 
     view.run();
 
