@@ -13,6 +13,13 @@ Player::Player(int i): id_(i){
     score_ = 0;
 }
 
+Player::Player(Player* other){ // copy constructor
+    score_ = other->score_;
+    id_ = other->id_;
+    hand_ = other->hand_;
+    discard_ = other->discard_;
+}
+
 int Player::id() const{
     return id_;
 }

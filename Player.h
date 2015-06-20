@@ -33,6 +33,7 @@ public:
 
 protected:
     explicit Player(int); // Constructor, we should only call this from its subclasses
+    Player(Player* other);
     bool isCardLegal(Card&, const std::map<Suit, std::set<Rank> >&);
     void discardAtIdx(int, bool);
 

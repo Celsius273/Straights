@@ -16,6 +16,8 @@ using namespace std;
 
 ComputerPlayer::ComputerPlayer(int p) : Player(p){}
 
+ComputerPlayer::ComputerPlayer(Player* other) : Player(other){}
+
 bool ComputerPlayer::isCpu(){
     return true;
 }

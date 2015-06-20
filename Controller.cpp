@@ -49,7 +49,8 @@ void Controller::acceptCommand(const Command &command){
         }
 
         case RAGEQUIT: {
-            //TODO: to be implemented
+            game_->setState(RAGEPRINT);
+            game_->replacePlayer();
             break;
         }
 

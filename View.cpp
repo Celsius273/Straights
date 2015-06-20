@@ -85,7 +85,11 @@ void View::run(){
                     case ENDGAME:{
                         return;
                     }
-
+                    case RAGEPRINT:{
+                        cout << "Player " << game_->curPlayer()+1 << " ragequits. A computer will now take over." << endl;
+                        game_->setState(PLAYING);
+                        break;
+                    }
                     case PRINTDECK:{
                         game_->printDeck();
                         break;

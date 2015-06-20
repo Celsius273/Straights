@@ -51,6 +51,12 @@ void Game::setState(GameState g){
     gameState_ = g;
 }
 
+void Game::replacePlayer(){
+    ComputerPlayer* newPlayer = new ComputerPlayer(players_.at(curPlayer_));
+    delete(players_.at(curPlayer_));
+    players_.at(curPlayer_) = newPlayer;
+}
+
 void Game::playCpu(Card &c){
     if (playedCards_.size() == 0){
         c = Card(SPADE, SEVEN);

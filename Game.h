@@ -9,16 +9,15 @@
 
 #include <vector>
 
-enum GameState { PLAYING, PRINTDECK, PRINTPLAY, INVALIDPLAY, PRINTDISCARD, INVALIDDISCARD, ENDROUND, ENDGAME };
+enum GameState {
+    PLAYING, PRINTDECK, PRINTPLAY, INVALIDPLAY, PRINTDISCARD, INVALIDDISCARD, ENDROUND, ENDGAME, RAGEPRINT
+};
 
 // Model class for MVC model
 class Game{
 public:
     Game(std::vector<std::string> const&, int const&);
-    //return array cards
-    //return players
     
-    //std::vector<Player*> players() const;
     Deck* deck();
     int curPlayer() const;
     bool isCurPlayerCpu() const;
@@ -28,6 +27,7 @@ public:
     void playCpu(Card&);
     void playCard(Card);
     void discard(Card);
+    void replacePlayer();
 
     void printDeck(); //prints the deck and reverts gamestate from DECK to PLAY
     void printPlayer();
