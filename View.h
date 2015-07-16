@@ -2,6 +2,7 @@
 #define _VIEW_
 
 #include "Card.h"
+#include "Observer.h"
 #include "Command.h"
 #include "Deck.h"
 #include "Player.h"
@@ -12,9 +13,10 @@
 #include <vector>
 
 //View class for MVC model
-class View{
+class View: public Observer{
 public:
     View(Controller*, Game*);
+    virtual void update();
     void run();
 private:
     Controller* controller_;

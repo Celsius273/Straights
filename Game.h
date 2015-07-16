@@ -3,6 +3,7 @@
 
 #include "Card.h"
 #include "Command.h"
+#include "Subject.h"
 #include "Deck.h"
 #include "Player.h"
 #include "HumanPlayer.h"
@@ -14,7 +15,7 @@ enum GameState {
 };
 
 // Model class for MVC model
-class Game{
+class Game : public Subject {
 public:
     class InvalidException{
     public:

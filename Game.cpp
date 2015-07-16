@@ -5,6 +5,7 @@
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
 #include "Game.h"
+#include "Subject.h"
 
 #include <cassert>
 #include <vector>
@@ -95,6 +96,7 @@ void Game::playCard(Card c){
 void Game::discard(Card c){
     if (players_.at(curPlayer_)->discard(c, playedCards_)){                                     //if you can discard the card as current player print discard
         gameState_ = PRINTDISCARD;
+        //notify();
     }
     else{                                                                                       //if not throw exception
         throw Game::InvalidException("You have a legal play. You may not discard.\n>");
@@ -104,6 +106,7 @@ void Game::discard(Card c){
 //print the deck
 void Game::printDeck(){
     gameState_ = PLAYING;                                                       //change the state to PLAYING and call deck's print functinon
+    //notify();
     deck_->printDeck();
 }
 
@@ -111,6 +114,7 @@ void Game::printDeck(){
 void Game::printPlayer(){
     if (!printed_){                                                             //if not printed
         players_.at(curPlayer_)->printPlayer(playedCards_);                     //print player's played cards.
+        //notify();
         printed_ = true;                                                        //change printed to be true
     }
 }

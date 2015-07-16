@@ -18,7 +18,19 @@
 
 using namespace std;
 
-View::View(Controller *c, Game *g) : game_(g), controller_(c){}
+View::View(Controller *c, Game *g) : game_(g), controller_(c){
+    g->subscribe(this); // for the observer pattern, subscribe the view
+}
+
+
+//TODO: implement the update method here
+void View::update(){
+
+
+
+}
+
+
 
 void View::run(){
     Command command;
