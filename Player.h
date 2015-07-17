@@ -2,7 +2,6 @@
 #define _PLAYER_
 
 #include "Card.h"
-#include "Command.h"
 #include "Deck.h"
 
 #include <map>
@@ -14,6 +13,7 @@ public:
     // Accessors
     int id() const; //for output PLEASE add 1 to this value
     int score() const;
+    int numDiscards() const;
     std::vector<Card*> hand();
     
     void printDiscard() const;            //PLEASE DELETE THIS DEBUG

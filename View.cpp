@@ -1,5 +1,4 @@
 #include "Card.h"
-#include "Command.h"
 #include "Deck.h"
 #include "Player.h"
 #include "HumanPlayer.h"
@@ -8,6 +7,7 @@
 #include "Controller.h"
 #include "View.h"
 
+#include <gtkmm.h>
 #include <vector>
 #include <cassert>
 #include <sstream>
@@ -15,125 +15,200 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <exception>
 
 using namespace std;
 
-View::View(Controller *c, Game *g) : game_(g), controller_(c){
+View::View(Controller *c, Game *g) : game_(g), controller_(c), 
+            startButton("Start new game with seed"),
+            endButton("End current game"),
+            cardFrame("Cards on table"),
+            handFrame("Your hand"){
     g->subscribe(this); // for the observer pattern, subscribe the view
-}
-
-
-//TODO: implement the update method here
-void View::update(){
-
-
-
-}
-
-
-
-void View::run(){
-    Command command;
-    /*
-    1. quit command -- DONE, though this does not mean much
-
-    2. shuffle (with and without random seed), deck command -- DONE, though we should still test WITH a random seed
-
-    3. human players only
-    a) print player's hand (identify First player, print legal moves)
-    b) play command (legal and illegal plays)
-    c) discard command (legal and illegal discards)
-    d) scoring
-
-    4. computer players
-    a) play command
-    b) discard command
-
-    5. ragequit command
-
-    */
-    //run this until the game is not ended
-    while (game_->gameState() != ENDGAME){
-        cout << "A new round begins. It's player "<< game_->curPlayer()+1 << "'s turn to play." << endl;
-
-        //run this while players are playing
-        while (game_->gameState() == PLAYING){
-            //check if the player is CPU
-            if (game_->isCurPlayerCpu()){
-                Card toPrint(SPADE, ACE);           //dummy card initialization
-                controller_->playCpu(toPrint);
-
-                switch (game_->gameState()){
-                    case ENDGAME:{
-                        return;             //if it is end game, break off
-                    }
-                    case PRINTPLAY:{
-                        game_->printPlay(toPrint);      //print the card that will be played
-                        break;
-                    }
-                    case PRINTDISCARD:{
-                        game_->printDiscard(toPrint);   //print the card that will be discarded
-                        break;
-                    }
-                }
-            }
-            //if not CPU, it must be player
-            else{
-                //output the player in play
-                game_->printPlayer();
-
-                //if we see that the current player is a computer player then we skip the command/accepting the command and make the game
-
-                cin >> command;
-
-                //surround this and the case statement with a try catch
-                //this would catch cards that are in your hand but are not legal plays, and attempts at discard when legal plays still exist
-                try{
-                    controller_->acceptCommand(command);
-
-                    switch (game_->gameState()){
-                        case ENDGAME:{
-                            return;         //if it is end game, break off
-                        }
-                        case RAGEPRINT:{
-                            cout << "Player " << game_->curPlayer() + 1 << " ragequits. A computer will now take over." << endl;
-                            game_->setState(PLAYING);           //change state to playing
-                            break;
-                        }
-                        case PRINTDECK:{
-                            game_->printDeck();                 //print the deck (debug purpose)
-                            break;
-                        }
-                        case PRINTPLAY:{
-                            game_->printPlay(command.card);     //print the card that will be played
-                            break;
-                        }
-                        case PRINTDISCARD:{
-                            game_->printDiscard(command.card);  //print the card that will be discarded
-                            break;
-                        }
-                    }
-                }
-                catch (const Game::InvalidException &e){
-                    cout << e.message();                        //send exception
-                }
-            }
-            //determine if round has ended or not
-            game_->checkRound();
-
-        }
-
-
-        game_->checkScores();
-        //print scores and add scores here
-        //round has ended, determine if game has ended or not
-
-        //if gamestate becomes play again, reset the round here
-        if (game_->gameState() == ENDROUND){
-            game_->restartRound();
+    const Glib::RefPtr<Gdk::Pixbuf> nullCardImage = deck.getNullImage();
+    vector<Glib::RefPtr<Gdk::Pixbuf> > cardImages;
+    for (int i=0;i<SUIT_COUNT ;i++){
+        for (int j=0; j<RANK_COUNT ;j++){
+            cardImages.push_back( deck.getCardImage(Card(Suit(i), Rank(j))) );
         }
     }
 
-    //game has ended, print winner(s)
-    game_->printWinner();
+    add(gameBox);
+    gameBox.pack_start(topBox, Gtk::PACK_SHRINK);
+
+    topBox.add(startButton);
+    topBox.add(nameField);
+    topBox.add(endButton);
+
+    gameBox.pack_start(cardFrame, Gtk::PACK_SHRINK);
+    
+    for (int i=0;i<SUIT_COUNT;i++){
+        for (int j=0;j<RANK_COUNT;j++){
+            cardsOnTable[i][j] = new Gtk::Image(nullCardImage);
+            suitsBox[i].add(*cardsOnTable[i][j]);
+        }
+    }
+
+    for (int i=0;i<SUIT_COUNT;i++){
+        gameBox.pack_start(suitsBox[i]);
+        gameBox.set_spacing(5);
+    }
+
+    gameBox.pack_start(playerBox, Gtk::PACK_SHRINK);
+    for (int i=0;i<4;i++){
+        Glib::ustring strVal;
+        std::stringstream ss;
+        ss << i+1;
+        ss >> strVal;
+
+        playerBoxes[i].add(playerButtons[i]);
+        playerBoxes[i].add(scoreLabels[i]);
+        playerBoxes[i].add(discardLabels[i]);
+
+        scoreLabels[i].set_text("Score: 0");
+        discardLabels[i].set_text("Discards: 0");
+        playerButtons[i].set_label("H/C: Human");
+        playerFrames[i].set_label("Player " +strVal);
+        playerFrames[i].add(playerBoxes[i]);
+
+        playerBox.add(playerFrames[i]);
+        isPlayerHuman.push_back(true); //initially set all players to human
+    }
+
+    gameBox.pack_start(handFrame, Gtk::PACK_SHRINK);     
+    gameBox.pack_start(handBox, Gtk::PACK_SHRINK);    
+    for (int i=0;i<RANK_COUNT;i++){
+        cardsInHand[i].set_image( *(new Gtk::Image( nullCardImage )) );
+
+        handBox.add(cardsInHand[i]);
+    }
+
+    show_all();
+
+    // BINDING ALL FUNCTIONS
+
+    // binding the start button
+    startButton.signal_clicked().connect( sigc::mem_fun( *this, &View::startButtonClicked ) );
+
+    // binding the end button
+    endButton.signal_clicked().connect( sigc::mem_fun( *this, &View::endButtonClicked ) );
+
+    // binding each of the player buttons
+    for (int i=0;i<4;i++){
+        playerButtons[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::playerButtonClicked), i));
+    }
+
+    // binding each of the card functions
+    for (int i=0;i<RANK_COUNT;i++){
+        cardsInHand[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::cardButtonClicked), i));
+    }
+
+}
+
+View::~View(){
+
+}
+
+void View::startButtonClicked(){
+    // Behavior: pass in the shuffle seed and the boolean array of player types into the game
+    // game will call function setup(vector<boolean> isPlayerHuman, int seed)
+
+    // afterwards, set the sensitive of this button to false when model calls notify
+    int seed = 0;
+    try{
+        if( !( isdigit( stoi( nameField.get_text() ) ) ) ){
+            seed = stoi(nameField.get_text());
+        }
+        else{
+            seed = 0;
+            throw;
+        }
+    }
+    catch (exception& e){
+        seed = 0;
+    }
+
+    controller_->startGame(isPlayerHuman, seed);
+}
+
+void View::endButtonClicked(){
+    // Behavior: ask if the player is sure to end the game
+    // if yes:   restart the game into the initial start state
+    // if no:    don't do anything
+    controller_->endGame();
+}
+
+void View::playerButtonClicked(const int playerIdx){
+    // Behavior: switch gamestate:
+    // if game has not started, toggle string between "H/C: Human" and "H/C: Computer"
+    // if game has started, cause the player to ragequit and set button sensitive to false
+    if (game_->curPlayer() == -1){
+        if (isPlayerHuman.at(playerIdx)){
+            playerButtons[playerIdx].set_label("H/C: Computer");
+            isPlayerHuman.at(playerIdx) = false;
+        }else{
+            playerButtons[playerIdx].set_label("H/C: Human");
+            isPlayerHuman.at(playerIdx) = true;
+        }
+    }else{
+        controller_->handlePlayer(playerIdx);
+    }
+}
+
+void View::cardButtonClicked(const int cardIdx){
+    controller_->handleCard(cardIdx);
+}
+
+//TODO: implement the update method here
+void View::update(){
+    // render the 4 components
+
+    //TODO: REFACTOR THE SHIT OUT OF THIS
+
+    // top bar:
+    if (game_->gameState() == ENDGAME){
+        startButton.set_sensitive(true);
+    }else{
+        startButton.set_sensitive(false);   
+    }
+    // endButton should ALWAYS be sensitive
+
+    // played cards:
+
+
+    // player windows:
+    if (game_->gameState() == ENDGAME){
+        for (int i=0;i<4;i++){
+            playerButtons[i].set_label("H/C: Human");
+            isPlayerHuman.at(i) = true;
+
+            scoreLabels[i].set_text("Score: 0");
+            discardLabels[i].set_text("Discards: 0");
+        }
+    }else{
+        for (int i=0;i<4;i++){
+            playerButtons[i].set_label("Ragequit!");
+            if (game_->curPlayer() == i){
+                playerButtons[i].set_sensitive(true);
+            }else{
+                playerButtons[i].set_sensitive(false);
+            }
+
+            Glib::ustring scoreStr;
+            std::stringstream scoreStream;
+            scoreStream << game_->pointsForPlayer();
+            scoreStream >> scoreStr;
+
+            Glib::ustring discardStr;
+            std::stringstream discardStream;
+            discardStream << game_->discardsForPlayer();
+            discardStream >> discardStr;
+            //TODO: make this less hacky
+
+            scoreLabels[i].set_text("Score: "+scoreStr);
+            discardLabels[i].set_text("Discards: "+discardStr);
+        }
+    }
+
+    // card buttons
 }

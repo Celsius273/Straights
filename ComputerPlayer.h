@@ -1,7 +1,6 @@
 #ifndef _COMPUTERPLAYER_
 #define _COMPUTERPLAYER_
 
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"

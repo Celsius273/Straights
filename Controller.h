@@ -1,7 +1,6 @@
 #ifndef _CONTROLLER_
 #define _CONTROLLER_
 
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"
@@ -15,8 +14,12 @@
 class Controller{
 public:
     Controller(Game*);
-    void acceptCommand(Command const&);
-    void playCpu(Card&);
+
+    void startGame(std::vector<bool> const&, int const&);
+    void endGame();
+
+    void handlePlayer(int const);
+    void handleCard(int const);
 
 private:
     Game* game_;

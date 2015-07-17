@@ -35,6 +35,8 @@ ostream &operator<<(ostream &out, const Card &c){
     return out;
 }
 
+
+/*
 //operator overload to get the card value
 istream &operator>>(istream &in, Card &c){
     string suits = "CDHS", ranks = "A234567891JQK";
@@ -59,3 +61,4 @@ istream &operator>>(istream &in, Card &c){
 
     return in;
 }
+*/

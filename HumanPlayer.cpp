@@ -1,4 +1,3 @@
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"
@@ -38,30 +37,18 @@ void HumanPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
     cout << "Cards on the table:" << endl;
     for (int i = 0; i < 4; i++){
         cout << suits[i];
-        //int hiPlayed = 0; // for formatting purposes
 
         map<Suit, set<Rank> >::const_iterator rankSet = playedCards.find(static_cast<Suit>(i));
         if (rankSet != playedCards.end()){
 
-            //for (set<Rank>::iterator it = playedCards[static_cast<Suit>(i)]  .begin(); it != playedCards[static_cast<Suit>(i)].end(); ++it){
             for (set<Rank>::iterator it = rankSet->second.begin(); it != rankSet->second.end(); ++it){
                 played[int(*it)] = true;        //the card on this index is played
-                
-                /*if (int(*it) > hiPlayed){
-                    hiPlayed = int(*it);
-                }*/
             }
 
             for (int j = 0; j < 13; j++){
                 if (played[j] == true){         //if the card on that index is played
                     played[j] = false;          //set it as false for resetting purposes
                     cout << " " << ranks[j];           //output the card
-                    /*if (j == hiPlayed){         //if this is the last element get out of the loop
-                        break;
-                    }*/
-                    //else{
-                    //    cout << " ";
-                    //}
                 }
             }
         }
@@ -88,20 +75,9 @@ void HumanPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
         }
     }
     else{                                                       //if game is ongoing
-        //int hiLegal = 0;
-        //find the index of last legal play card
-        /*for (int i = 0; i < playerhand.size(); i++){                
-            if (isCardLegal(*(playerhand.at(i)), playedCards)){
-                hiLegal = i;
-            }
-        }*/
-
         for (int i = 0; i < playerhand.size(); i++){
             if (isCardLegal(*(playerhand.at(i)), playedCards)){
                 cout << " " << *(playerhand.at(i)); //do not print space if this is the last legal card
-                /*if (i != hiLegal){                              //if current index is not at the last give space
-                    cout << " ";
-                }*/
             }
         }
         cout << endl << ">";

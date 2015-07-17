@@ -1,7 +1,6 @@
 #ifndef _HUMANPLAYER_
 #define _HUMANPLAYER_
 
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"

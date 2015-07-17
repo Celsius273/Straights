@@ -1,4 +1,3 @@
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"
@@ -32,6 +31,10 @@ int Player::score() const{
     return score_;
 }
 
+//return number of discards
+int Player::numDiscards() const{
+    return discard_.size();
+}
 
 //return player's card deck
 vector<Card*> Player::hand(){

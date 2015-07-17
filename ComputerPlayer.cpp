@@ -1,4 +1,3 @@
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"
@@ -34,7 +33,7 @@ void ComputerPlayer::printPlayer(const map<Suit, set<Rank> > &playedCards){
 bool ComputerPlayer::playCard(Card &card, map<Suit, set<Rank> > &playedCards){
     vector<Card*> playHand = hand();
     //play the first card that is playable
-    if (card == Card(SPADE, SEVEN)){
+    if (card == Card(SPADE, SEVEN) && playedCards.size() == 0){
         set<Rank> newSet;
         newSet.insert(card.getRank());
         playedCards[card.getSuit()] = newSet;

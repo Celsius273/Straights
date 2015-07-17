@@ -2,7 +2,6 @@
 #define _GAME_
 
 #include "Card.h"
-#include "Command.h"
 #include "Subject.h"
 #include "Deck.h"
 #include "Player.h"
@@ -10,8 +9,14 @@
 
 #include <vector>
 
+/*
 enum GameState {
     PLAYING, PRINTDECK, PRINTPLAY, PRINTDISCARD, RAGEPRINT, ENDROUND, ENDGAME
+};
+*/
+
+enum GameState {
+    PLAYING, ENDROUND, ENDGAME
 };
 
 // Model class for MVC model
@@ -26,34 +31,40 @@ public:
         std::string message_;
     };
 
-    Game(std::vector<std::string> const&, int const&);
+    //Game(std::vector<std::string> const&, int const&);
+    Game();
 
     Deck* deck();
     int curPlayer() const;
     bool isCurPlayerCpu() const;
     GameState gameState() const;
-    void setState(GameState);
 
-    void playCpu(Card&);
-    void playCard(Card);
-    void discard(Card);
     void replacePlayer();
+    void invokeCpuLoop();
 
-    void printDeck(); //prints the deck and reverts gamestate from DECK to PLAY
-    void printPlayer();
-    void printPlay(Card);
-    void printDiscard(Card);
-    void printWinner();
+    void handleCard(int const&);
+    int lastCardPlayedIdx() const;
+
+    //void printWinner();
 
     void checkRound();
     void restartRound(); //changes gamestate from ENDROUND to PLAY, shuffles deck, called only when a round ends after score calculation
     void checkScores(); //end the game if a player has more than 80 points, determines winner(s)
 
+    void setup(std::vector<bool> const&, int const&); //boolean vector of player types and deck seed
+    void restartGame(); //restarts game
+    int pointsForPlayer() const;
+    int discardsForPlayer() const;
+
 private:
     Deck* deck_;
 
-    int curPlayer_; //game state on which player is currently playing
+    int curPlayer_; //game state on which player is currently playing, -1 corresponds to start state
+    
+    int lastCardPlayedIdx_;
+
     bool printed_;
+    
     static const int WIN_POINTS = 80;
     GameState gameState_;
     std::vector<Player*> players_;

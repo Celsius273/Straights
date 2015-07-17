@@ -1,4 +1,3 @@
-#include "Command.h"
 #include "Card.h"
 #include "Deck.h"
 #include "Player.h"
@@ -15,9 +14,31 @@ using namespace std;
 
 Controller::Controller(Game *g) : game_(g){}
 
-void Controller::playCpu(Card &card){
-    game_->playCpu(card);
+void Controller::startGame(const vector<bool> &isPlayerHuman, const int &seed){
+    game_->setup(isPlayerHuman, seed);
+    game_->invokeCpuLoop();
 }
+
+void Controller::endGame(){
+    game_->restartGame();
+    // do not invoke CPU loop here as there is no way that a CPU can start playing after this command finishes
+}
+
+void Controller::handlePlayer(const int playerIdx){
+    // we know that right here, the curPlayer_ MUST NOT be -1
+    // take that player and make them ragequit
+    if (playerIdx == game_->curPlayer() && !(game_->isCurPlayerCpu()) ) {
+        game_->replacePlayer();
+    }
+    game_->invokeCpuLoop();
+}
+
+void Controller::handleCard(const int cardIdx){
+    game_->handleCard(cardIdx);
+    game_->invokeCpuLoop();
+}
+
+/*
 void Controller::acceptCommand(const Command &command){
     //Controller only updates the game state
     switch (command.type) {
@@ -56,4 +77,6 @@ void Controller::acceptCommand(const Command &command){
             cerr << "Invalid Command" << endl;
         }
     }
+
 }
+*/

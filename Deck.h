@@ -1,7 +1,6 @@
 #ifndef _DECK_
 #define _DECK_
 
-#include "Command.h"
 #include "Card.h"
 #include <random>
 #include <vector>
