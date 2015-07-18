@@ -1,6 +1,7 @@
 #ifndef _SUBJECT_
 #define _SUBJECT_
 #include <set>
+#include "Observer.h"
 class Observer;
 
 class Subject {
@@ -9,7 +10,7 @@ public:
     void unsubscribe(Observer*);
 
 protected:
-    void notify();
+    void notify(Notification n);
 
 private:
     typedef std::set< Observer* > Observers;

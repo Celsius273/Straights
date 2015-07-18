@@ -33,7 +33,8 @@ int Player::score() const{
 
 //return number of discards
 int Player::numDiscards() const{
-    return discard_.size();
+    int toReturn(discard_.size());
+    return toReturn;
 }
 
 //return player's card deck
@@ -123,6 +124,7 @@ bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playe
 void Player::discardAtIdx(int idxToDiscard, bool addToDiscard){
     if (addToDiscard){
         discard_.push_back(hand_.at(idxToDiscard)); //add from hand to discard pile
+        //cout << "Discards: " << discard_.size() << endl;
     }
     //delete element from hand
     hand_.erase(hand_.begin() + idxToDiscard);

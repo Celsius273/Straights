@@ -142,7 +142,7 @@ void View::playerButtonClicked(const int playerIdx){
     // Behavior: switch gamestate:
     // if game has not started, toggle string between "H/C: Human" and "H/C: Computer"
     // if game has started, cause the player to ragequit and set button sensitive to false
-    if (game_->curPlayer() == -1){
+    if (game_->gameState() == ENDGAME){
         if (isPlayerHuman.at(playerIdx)){
             playerButtons[playerIdx].set_label("H/C: Computer");
             isPlayerHuman.at(playerIdx) = false;
@@ -159,12 +159,7 @@ void View::cardButtonClicked(const int cardIdx){
     controller_->handleCard(cardIdx);
 }
 
-//TODO: implement the update method here
-void View::update(){
-    // render the 4 components
-
-    //TODO: REFACTOR THE SHIT OUT OF THIS
-
+void View::updateTopBar(){
     // top bar:
     if (game_->gameState() == ENDGAME){
         startButton.set_sensitive(true);
@@ -172,43 +167,171 @@ void View::update(){
         startButton.set_sensitive(false);   
     }
     // endButton should ALWAYS be sensitive
+}
 
-    // played cards:
+void View::updatePlayedCards(){
+    // To be implemented by David
+    if(game_->lastCardPlayedIdx() != -1){
+        int idx = game_->lastCardPlayedIdx();
+        cardsOnTable[idx/13][idx%13]->set( deck.getCardImage(Card(Suit(idx/13),Rank(idx%13)) ) );
+    }
+    //else{
+    if(game_->gameState() == ENDROUND || game_->gameState() == ENDGAME){
+        //cout << "RESET PLAYED CARD" << endl;
+        for(int i = 0; i < SUIT_COUNT;i++){
+            for(int j = 0; j < RANK_COUNT;j++){
+                cardsOnTable[i][j]->set( deck.getNullImage() );
+            }
+        }
+    }
+    //RESET PLAYEDCARD
+}
 
-
+void View::updatePlayerInfo(){
     // player windows:
     if (game_->gameState() == ENDGAME){
         for (int i=0;i<4;i++){
             playerButtons[i].set_label("H/C: Human");
             isPlayerHuman.at(i) = true;
-
+            playerButtons[i].set_sensitive(true);
             scoreLabels[i].set_text("Score: 0");
             discardLabels[i].set_text("Discards: 0");
         }
-    }else{
+    }
+    else if (game_->gameState() == ENDROUND){
+        Glib::ustring displayStr;
+        std::stringstream infoStream;
         for (int i=0;i<4;i++){
+            //update player scores
+            infoStream << game_->pointsForPlayer(i);
+            infoStream >> displayStr;
+            scoreLabels[i].set_text("Score: "+displayStr);
+
+            infoStream.clear();
+            displayStr = "";            
+            playerButtons[i].set_sensitive(true);
+            discardLabels[i].set_text("Discards: 0");
+        }
+    }else{
+        Glib::ustring displayStr;
+        std::stringstream infoStream;
+        for (int i=0;i<4;i++){
+            infoStream.clear();
+            displayStr = "";
             playerButtons[i].set_label("Ragequit!");
+
+            infoStream << game_->pointsForPlayer(i);
+            infoStream >> displayStr;
+            scoreLabels[i].set_text("Score: "+displayStr);
+
+            infoStream.clear();
+            displayStr = "";
+
+            infoStream << game_->discardsForPlayer(i);
+            infoStream >> displayStr;
+            discardLabels[i].set_text("Discards: "+displayStr);
+
             if (game_->curPlayer() == i){
                 playerButtons[i].set_sensitive(true);
             }else{
                 playerButtons[i].set_sensitive(false);
             }
 
-            Glib::ustring scoreStr;
-            std::stringstream scoreStream;
-            scoreStream << game_->pointsForPlayer();
-            scoreStream >> scoreStr;
+            
+        }
+    }
+}
 
-            Glib::ustring discardStr;
-            std::stringstream discardStream;
-            discardStream << game_->discardsForPlayer();
-            discardStream >> discardStr;
-            //TODO: make this less hacky
-
-            scoreLabels[i].set_text("Score: "+scoreStr);
-            discardLabels[i].set_text("Discards: "+discardStr);
+void View::updateCardsInHand(){
+    if(game_->gameState() == PLAYING){
+        //string suits[SUIT_COUNT] = { "C", "D", "H", "S" };
+        //string ranks[RANK_COUNT] = { "A", "2", "3", "4", "5", "6","7", "8", "9", "10", "J", "Q", "K" };
+        vector<int> a = game_->getCurPlayerHand();
+        for(int c = 0; c < RANK_COUNT;c++){
+            cardsInHand[c].set_image( *(new Gtk:: Image( deck.getNullImage() )) );
+        }
+        for(int i = 0; i < a.size();i++)
+        {
+            //cout << ranks[a.at(i)%13];
+            //cout << suits[a.at(i)/13] << endl;        
+            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getCardImage(Card(Suit(a.at(i)/13), Rank(a.at(i)%13))) )) );      
+        }
+    }
+    if(game_->gameState() == ENDROUND || game_->gameState() == ENDGAME){
+        //RESET PLAYER CARD
+        //cout << "RESET PLAYER CARD" << endl;
+        for(int i = 0; i < RANK_COUNT;i++){
+            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getNullImage() )) );    
         }
     }
 
-    // card buttons
+}
+
+void View::update(Notification n){
+    // render the 4 components
+    updateTopBar();
+    updatePlayedCards();
+    updatePlayerInfo();
+    updateCardsInHand();
+    
+    switch (n){
+        case NEWSTART:{
+            Gtk::Dialog dialog( "STARTING GAME LOL", *this );
+            Gtk::Label nameLabel( "Game started with seed");
+            Gtk::VBox* contentArea = dialog.get_vbox();
+            contentArea->pack_start( nameLabel, true, false );
+            nameLabel.show();
+
+            Gtk::Button *okButton = dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK);
+            int result = dialog.run();
+            break;
+        }
+        case NEWROUND:{
+            break;
+        }
+        case WINNER:{
+            break;
+        }default:{
+            break;
+        }
+    }
+
+    /*
+    // Create the message dialog box with stock "Ok" and "Cancel" buttons.
+    Gtk::Dialog dialog( "Text Entry Dialog Box", *this );
+    
+    Gtk::Entry   nameField;                  // Text entry for the user's name
+    Gtk::Label   nameLabel( "Please enter your name:" );
+    
+    // Add the text entry widget to the dialog box.
+    // Add the text entry widget to the vertical box section of the dialog box.
+    Gtk::VBox* contentArea = dialog.get_vbox();
+    contentArea->pack_start( nameLabel, true, false );
+    contentArea->pack_start( nameField, true, false );
+    
+    nameField.set_text( "" );
+    nameLabel.show();
+    nameField.show();
+    
+    // Add two standard buttons, "Ok" and "Cancel" with the appropriate responses when clicked.
+    Gtk::Button * okButton = dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK);
+    Gtk::Button * cancelButton = dialog.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    
+    // Wait for a response from the dialog box.
+    int result = dialog.run();
+    std::string name;
+    switch (result) {
+        case Gtk::RESPONSE_OK:
+        case Gtk::RESPONSE_ACCEPT:
+            name = nameField.get_text();
+            std::cout << "Entered '" << name << "'" << std::endl;
+            break;
+        case Gtk::RESPONSE_CANCEL:
+            std::cout << "dialog cancelled" << std::endl;
+            break;
+        default:
+            std::cout << "unexpected button clicked" << std::endl;
+            break;
+    } // switch
+    */
 }

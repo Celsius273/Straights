@@ -9,12 +9,6 @@
 
 #include <vector>
 
-/*
-enum GameState {
-    PLAYING, PRINTDECK, PRINTPLAY, PRINTDISCARD, RAGEPRINT, ENDROUND, ENDGAME
-};
-*/
-
 enum GameState {
     PLAYING, ENDROUND, ENDGAME
 };
@@ -53,8 +47,9 @@ public:
 
     void setup(std::vector<bool> const&, int const&); //boolean vector of player types and deck seed
     void restartGame(); //restarts game
-    int pointsForPlayer() const;
-    int discardsForPlayer() const;
+    int pointsForPlayer(int const&) const;
+    int discardsForPlayer(int const&) const;
+    std::vector<int> getCurPlayerHand() const;
 
 private:
     Deck* deck_;
