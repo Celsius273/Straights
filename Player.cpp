@@ -42,6 +42,32 @@ vector<Card*> Player::hand(){
     return hand_;
 }
 
+vector<Card*> Player::discard(){
+	return discard_;
+}
+
+vector<Card*> Player::validPlay(const map< Suit, set<Rank> > &playedCards){
+    vector<Card*> PlayableCards;
+	
+	if(playedCards.size() > 0){    
+		const map< Suit, set<Rank> > currPlayed = playedCards;
+	
+		cout << "--------------------------" << endl;	        
+		cout << "Played card slot size: " << playedCards.size() << endl;
+		cout << "Player " << id_+1 << "'s turn"<< endl;
+		cout << "Player's card deck size " << hand_.size() << endl;
+		cout << "--------------------------" << endl;	        
+				
+		for(int i = 0 ; i < hand_.size();i++){
+						
+			if(isCardLegal(*(hand_.at(i)),currPlayed)){
+		        PlayableCards.push_back(hand_.at(i));
+		    }
+		}
+	}
+    return PlayableCards;
+}
+
 //print the card that will be discarded
 void Player::printDiscard() const{
     //ONLY FOR DEBUG PLEASE DELETE
@@ -124,7 +150,6 @@ bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playe
 void Player::discardAtIdx(int idxToDiscard, bool addToDiscard){
     if (addToDiscard){
         discard_.push_back(hand_.at(idxToDiscard)); //add from hand to discard pile
-        //cout << "Discards: " << discard_.size() << endl;
     }
     //delete element from hand
     hand_.erase(hand_.begin() + idxToDiscard);

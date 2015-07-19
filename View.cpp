@@ -23,7 +23,8 @@ View::View(Controller *c, Game *g) : game_(g), controller_(c),
             startButton("Start new game with seed"),
             endButton("End current game"),
             cardFrame("Cards on table"),
-            handFrame("Your hand"){
+            handFrame("Your hand"),
+			discardFrame("Discarded Card's grave"){
     g->subscribe(this); // for the observer pattern, subscribe the view
     const Glib::RefPtr<Gdk::Pixbuf> nullCardImage = deck.getNullImage();
     vector<Glib::RefPtr<Gdk::Pixbuf> > cardImages;
@@ -79,10 +80,19 @@ View::View(Controller *c, Game *g) : game_(g), controller_(c),
     gameBox.pack_start(handBox, Gtk::PACK_SHRINK);    
     for (int i=0;i<RANK_COUNT;i++){
         cardsInHand[i].set_image( *(new Gtk::Image( nullCardImage )) );
+		cardsInHand[i].set_sensitive(false);
 
         handBox.add(cardsInHand[i]);
     }
 
+	gameBox.pack_start(discardFrame,Gtk::PACK_SHRINK);
+	gameBox.pack_start(discardBox, Gtk::PACK_SHRINK);
+	for(int i = 0; i < RANK_COUNT;i++){
+		cardsInDiscard[i].set( deck.getNullImage() );
+		discardBox.add(cardsInDiscard[i]);
+
+		cardsInDiscard[i].set_sensitive(false);
+	}
     show_all();
 
     // BINDING ALL FUNCTIONS
@@ -158,6 +168,7 @@ void View::playerButtonClicked(const int playerIdx){
 void View::cardButtonClicked(const int cardIdx){
     controller_->handleCard(cardIdx);
 }
+
 
 void View::updateTopBar(){
     // top bar:
@@ -243,37 +254,61 @@ void View::updatePlayerInfo(){
 }
 
 void View::updateCardsInHand(){
+    // card buttons
     if(game_->gameState() == PLAYING){
-        //string suits[SUIT_COUNT] = { "C", "D", "H", "S" };
-        //string ranks[RANK_COUNT] = { "A", "2", "3", "4", "5", "6","7", "8", "9", "10", "J", "Q", "K" };
-        vector<int> a = game_->getCurPlayerHand();
+
+        vector<int> cardPile = game_->getCurPlayerHand();
+        vector<int> discardPile = game_->getCurPlayerDiscard();
+        vector<int> playablePile = game_->getPlayableCard();
         for(int c = 0; c < RANK_COUNT;c++){
+            cardsInDiscard[c].set( deck.getNullImage() );
             cardsInHand[c].set_image( *(new Gtk:: Image( deck.getNullImage() )) );
+            cardsInHand[c].set_sensitive(false);
         }
-        for(int i = 0; i < a.size();i++)
-        {
-            //cout << ranks[a.at(i)%13];
-            //cout << suits[a.at(i)/13] << endl;        
-            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getCardImage(Card(Suit(a.at(i)/13), Rank(a.at(i)%13))) )) );      
+        for(int i = 0; i < cardPile.size();i++){  
+            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getCardImage(Card(Suit(cardPile.at(i)/13), Rank(cardPile.at(i)%13))) )) );
+            /*for(int l = 0; l < playablePile.size(); l++){
+                if(playablePile.at(l) == cardPile.at(i)){
+                    cardsInHand[i].set_sensitive(false);
+                }
+                else{
+                    cardsInHand[i].set_sensitive(true);
+                }
+            }*/
+			cardsInHand[i].set_sensitive(true);
+        }
+        for(int j = 0; j < discardPile.size();j++){
+            cardsInDiscard[j].set( deck.getCardImage(Card(Suit(j/13),Rank(j%13)) ) );
         }
     }
     if(game_->gameState() == ENDROUND || game_->gameState() == ENDGAME){
+        //RESET PLAYEDCARD
+        cout << "RESET PLAYED CARD" << endl;
+        for(int i = 0; i < SUIT_COUNT;i++){
+            for(int j = 0; j < RANK_COUNT;j++){
+                cardsOnTable[i][j]->set( deck.getNullImage() );
+            }
+        }
+        
+
         //RESET PLAYER CARD
-        //cout << "RESET PLAYER CARD" << endl;
+        cout << "RESET PLAYER CARD" << endl;
         for(int i = 0; i < RANK_COUNT;i++){
             cardsInHand[i].set_image( *(new Gtk:: Image( deck.getNullImage() )) );    
         }
     }
-
 }
 
+
+//TODO: implement the update method here
 void View::update(Notification n){
     // render the 4 components
     updateTopBar();
     updatePlayedCards();
     updatePlayerInfo();
     updateCardsInHand();
-    
+    //TODO: REFACTOR THE SHIT OUT OF THIS
+
     switch (n){
         case NEWSTART:{
             Gtk::Dialog dialog( "STARTING GAME LOL", *this );
@@ -287,6 +322,14 @@ void View::update(Notification n){
             break;
         }
         case NEWROUND:{
+			/*Gtk::Dialog dialog( "No winner was decided, new round has started", *this );
+			Gtk::Label newRoundLabel( "Game restarted with given seed" );
+			Gtk::VBox* newRoundContent = dialog.get_vbox();
+			newRoundContent->pack_start(newRoundLabel, true, false);
+			newRoundLabel.show();
+			
+			Gtk::Button *okButton = dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK);
+			int result = dialog.run();*/ 
             break;
         }
         case WINNER:{

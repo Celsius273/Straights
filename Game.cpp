@@ -17,7 +17,7 @@ using namespace std;
 Game::Game(){
     curPlayer_ = 0;
     gameState_ = ENDGAME;
-    lastCardPlayedIdx_=-1;
+	lastCardPlayedIdx_ = -1; //if this is -1 make sure not to get image to avoid out of bounds error in the view
 }
 
 void Game::setup(const vector<bool> &isPlayerHuman, const int &seed){
@@ -91,7 +91,6 @@ void Game::handleCard(const int &cardIdx){
     //checkround here
     checkRound();
 }
-
 void Game::invokeCpuLoop(){
     while (players_.at(curPlayer_)->isCpu() && gameState_ == PLAYING){
         // while current player is a CPU, play the game automatically until it gets to a state where human action is REQUIRED
@@ -143,22 +142,43 @@ GameState Game::gameState() const{
     return gameState_;
 }
 
-vector<int> Game::getCurPlayerHand() const{
-    vector<int> cardVals;
-    for (int i=0;i<players_.at(curPlayer_)->hand().size();i++){
-        Card *c = players_.at(curPlayer_)->hand().at(i);
-        cardVals.push_back( ((int) c->getSuit())*RANK_COUNT + ((int) c->getRank() ) );
-        
-    }
-    return cardVals;
-}
-
 //replace player as computer player
 void Game::replacePlayer(){
     ComputerPlayer* newPlayer = new ComputerPlayer(players_.at(curPlayer_));
     delete(players_.at(curPlayer_));
     players_.at(curPlayer_) = newPlayer;
     notify(NONE); //may change to ragequit
+}
+
+
+vector<int> Game::getCurPlayerHand() const{
+	vector<int> cardVals;
+	for (int i=0;i<players_.at(curPlayer_)->hand().size();i++){
+		Card *c = players_.at(curPlayer_)->hand().at(i);
+		cardVals.push_back( ((int) c->getSuit())*RANK_COUNT + ((int) c->getRank() ) );
+		
+	}
+	return cardVals;
+}
+
+vector<int> Game::getCurPlayerDiscard() const{
+	vector<int> discardVals;
+	for(int i = 0; i <players_.at(curPlayer_)->discard().size();i++){
+		Card *c = players_.at(curPlayer_)->discard().at(i);
+		discardVals.push_back( ((int) c->getSuit())*RANK_COUNT + ((int) c->getRank() ) );
+	}
+	return discardVals;
+}
+
+vector<int> Game::getPlayableCard() const{
+    vector<int> playableVal;
+	if(playedCards_.size() > 0){
+		for(int i = 0; players_.at(curPlayer_)->validPlay(playedCards_).size();i++){
+		    Card *c = players_.at(curPlayer_)->validPlay(playedCards_).at(i);
+		    playableVal.push_back( ((int) c->getSuit())*RANK_COUNT + ((int) c->getRank() ) );
+		}
+	}
+    return playableVal;
 }
 
 //print the winner
@@ -205,6 +225,7 @@ void Game::checkRound(){
     notify(WINNER);
     cout << "Game ends" << endl;
 }
+
 
 // this can only be called if the game state is ENDROUND
 void Game::restartRound(){

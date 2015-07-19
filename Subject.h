@@ -10,7 +10,7 @@ public:
     void unsubscribe(Observer*);
 
 protected:
-    void notify(Notification n);
+    void notify(Notification);
 
 private:
     typedef std::set< Observer* > Observers;

@@ -50,6 +50,10 @@ public:
     int pointsForPlayer(int const&) const;
     int discardsForPlayer(int const&) const;
     std::vector<int> getCurPlayerHand() const;
+    std::vector<int> getCurPlayerDiscard() const; //get a vector of ints representing the current player's discard pile. int = index for the card image.
+    std::vector<int> getPlayableCard() const; //get a vector of ints that is the index of playable cards.
+
+
 
 private:
     Deck* deck_;
