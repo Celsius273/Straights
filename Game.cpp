@@ -178,7 +178,6 @@ vector<int> Game::getPlayableCard() const{
 		Card *c = validPlayCards.at(i);
 		playableVal.push_back( ((int) c->getSuit())*RANK_COUNT + ((int) c->getRank() ) );
 	}
-
     return playableVal;
 }
 
