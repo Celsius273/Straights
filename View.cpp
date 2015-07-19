@@ -253,6 +253,7 @@ void View::updatePlayerInfo(){
     }
 }
 
+
 void View::updateCardsInHand(){
     // card buttons
 	bool notPlayable = true;
@@ -297,12 +298,10 @@ void View::updateCardsInHand(){
             }
         }
         
-
         //RESET PLAYER CARD
         cout << "RESET PLAYER CARD" << endl;
         for(int i = 0; i < RANK_COUNT;i++){
-            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getNullImage() )) );   
-			cardsInDiscard[i].set( deck.getNullImage() ); 
+            cardsInHand[i].set_image( *(new Gtk:: Image( deck.getNullImage() )) );    
         }
     }
 }

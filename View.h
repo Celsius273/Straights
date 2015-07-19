@@ -91,8 +91,6 @@ private:
     void updatePlayedCards();
     void updatePlayerInfo();
     void updateCardsInHand();
-
-	void showWinnerDialog();
 };
 
 #endif
