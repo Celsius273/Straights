@@ -12,8 +12,8 @@ void Subject::unsubscribe(Observer *formerView) {
 }
 
 
-void Subject::notify() {
+void Subject::notify(Notification n) {
     Observers::iterator i;
     for (i = observers_.begin(); i != observers_.end(); ++i)
-        (*i)->update();
+        (*i)->update(n);
 }

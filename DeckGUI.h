@@ -1,6 +1,6 @@
 #ifndef _DECK_GUI_
 #define _DECK_GUI_
-#include <gdkmm.h>
+#include <gtkmm.h>
 #include <vector>
 
 #include "Card.h"

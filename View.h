@@ -18,7 +18,7 @@ class View: public Observer, public Gtk::Window{
 public:
     View(Controller*, Game*);
     virtual ~View(); // free all the cardsOnTable, controller and game_
-    virtual void update();
+    virtual void update(Notification n);
 private:
     Controller* controller_; // link to controller
     Game* game_; // link to model
@@ -70,6 +70,14 @@ private:
     Gtk::Button cardsInHand[RANK_COUNT];
 
     ///////////////////////////////////////////////////////////////////////////////////////////// 
+    //////////////////////////////////// PLAYER'S DISCARD ///////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+	Gtk::HBox discardBox;
+	Gtk::Frame discardFrame;
+	Gtk::Image cardsInDiscard[RANK_COUNT];
+
+    ///////////////////////////////////////////////////////////////////////////////////////////// 
     ////////////////////////////////////// BUTTON FUNCTIONS /////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +85,12 @@ private:
     void endButtonClicked(); // linked to endButton
     void playerButtonClicked(int const); // linked to each of the 4 playerButtons, will pass in index of playerButton
     void cardButtonClicked(int const); // linked to each of the 13 cardButtons in cardsInHand, will pass in index of card to be used
+
+     // to be called by the View only, to decouple the main update function
+    void updateTopBar();
+    void updatePlayedCards();
+    void updatePlayerInfo();
+    void updateCardsInHand();
 };
 
 #endif

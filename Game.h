@@ -9,12 +9,6 @@
 
 #include <vector>
 
-/*
-enum GameState {
-    PLAYING, PRINTDECK, PRINTPLAY, PRINTDISCARD, RAGEPRINT, ENDROUND, ENDGAME
-};
-*/
-
 enum GameState {
     PLAYING, ENDROUND, ENDGAME
 };
@@ -53,8 +47,13 @@ public:
 
     void setup(std::vector<bool> const&, int const&); //boolean vector of player types and deck seed
     void restartGame(); //restarts game
-    int pointsForPlayer() const;
-    int discardsForPlayer() const;
+    int pointsForPlayer(int const&) const;
+    int discardsForPlayer(int const&) const;
+    std::vector<int> getCurPlayerHand() const;
+    std::vector<int> getCurPlayerDiscard() const; //get a vector of ints representing the current player's discard pile. int = index for the card image.
+    std::vector<int> getPlayableCard() const; //get a vector of ints that is the index of playable cards.
+
+
 
 private:
     Deck* deck_;
