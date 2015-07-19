@@ -15,7 +15,11 @@ public:
     int score() const;
     int numDiscards() const;
     std::vector<Card*> hand();
-    
+	std::vector<Card*> discard();
+	std::vector<Card*> validPlay(const std::map<Suit, std::set<Rank> >&);    
+	//void validPlay(const std::map<Suit, std::set<Rank> >&);    
+	
+
     void printDiscard() const;            //PLEASE DELETE THIS DEBUG
 
     // std::vector<Card*> discard(); // may not need

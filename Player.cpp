@@ -33,12 +33,36 @@ int Player::score() const{
 
 //return number of discards
 int Player::numDiscards() const{
-    return discard_.size();
+    int toReturn(discard_.size());
+    return toReturn;
 }
 
 //return player's card deck
 vector<Card*> Player::hand(){
     return hand_;
+}
+
+vector<Card*> Player::discard(){
+	return discard_;
+}
+
+//returns the vector of the cards which are playable
+vector<Card*> Player::validPlay(const map< Suit, set<Rank> > &playedCards){
+//void Player::validPlay(const map< Suit, set<Rank> > &playedCards){ 
+   	vector<Card*> PlayableCards;
+	vector<Card*> playerHand = hand();
+	
+	//cout <<"playedCards.size(): " << playedCards.size() << endl;
+
+	for(int i = 0; i < playerHand.size(); i++){
+		if(isCardLegal(*(playerHand.at(i)), playedCards)){
+			//cout <<"PLAYABLE @ "<<i<< endl;
+			PlayableCards.push_back(playerHand.at(i));
+		}		
+	}
+	//cout <<"PlayableCards.size(): " << 	PlayableCards.size() << endl;
+	
+	return PlayableCards;
 }
 
 //print the card that will be discarded
@@ -95,9 +119,13 @@ int Player::calculateScore(){
 
 //check if the selected card is a legal play
 bool Player::isCardLegal(Card& card, const std::map<Suit, std::set<Rank> >&playedCards){
-
-    //Any suit with 7
-    if (card.getRank() == SEVEN){
+	
+	//SEVEN SPADE MASTER RACE
+	if (card.getRank() == SEVEN && card.getSuit() == SPADE){
+		return true;
+	} 
+    //Any suit with 7 BUT AFTER SPADE
+    if (card.getRank() == SEVEN && playedCards.size() > 0){
         return true;
     }
 
